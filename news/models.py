@@ -6,6 +6,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import Sum
 from django.db.models.functions import Coalesce
+from django.core.validators import MinValueValidator
 
 from news.resources import POSITIONS, POSIT_CAT, news
 
@@ -23,8 +24,14 @@ class Author(models.Model):
         self.rating = posts_rating * 3 + comments_rating + posts_comments_rating
         self.save()
 
+    # def __str__(self):
+    #     return self.user
+
 class Category(models.Model):
     title_category = models.CharField(max_length=3, unique=True, choices=POSIT_CAT)
+
+    def __str__(self):
+        return self.title_category.title()
 
 class Post(models.Model):
     art_new = models.CharField(max_length = 3, choices=POSITIONS, default=news)
@@ -47,6 +54,9 @@ class Post(models.Model):
     def preview(self):
         small_text = self.text[0:124] + '...'
         return small_text
+
+    def __str__(self):
+        return f'{self.title}'
 
 class PostCategory(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
